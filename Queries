@@ -1,0 +1,128 @@
+--SELECT * FROM WorldCupMatches
+--SELECT * FROM WorldCupPlayers
+--SELECT * FROM WorldCups
+-------------------------WORLD CUPS THAT FRANCE PLAYED IN from 1930 to 2014-------------------------
+SELECT DISTINCT [Year]
+FROM WorldCupMatches
+WHERE 
+    [Home Team Name] like 'France' OR
+    [Away Team Name] like 'France'
+-----------------------------FRANCE GOLD MEDALS between 1930 and 2014--------------------------------
+SELECT *
+FROM WorldCups
+WHERE Winner = 'France'
+-----------------------------FRANCE SILVER MEDALS between 1930 and 2014-------------------------------
+SELECT *
+FROM WorldCups
+WHERE [Runners-Up] = 'France'
+-----------------------------FRANCE BRONZE MEDALS between 1930 and 2014-------------------------------
+SELECT *
+FROM WorldCups
+WHERE [Third] = 'France'
+-----------------------------FRANCE FOURTH PLACE between 1930 and 2014-------------------------------
+SELECT *
+FROM WorldCups
+WHERE [Fourth] = 'France'
+---------------------GOALS SCORED AND CONCEEDED BY FRANCE BETWEEN 1930 AND 2014-----------------------
+SELECT [Home Team Name],
+    SUM(CAST([Home Team Goals] AS int)) AS TOTAL_SCORED,
+    SUM(CAST([Away Team Goals] AS INT)) AS TOTAL_CONCEEDED
+FROM WorldCupMatches
+WHERE [Home Team Name] = 'France'
+GROUP BY [Home Team Name]
+----------------------------------FRANCE PERFORMANCE IN 1998 WORLD CUP---------------------------------
+    SELECT  
+        SUBSTRING([Datetime], 2, 12) AS Date,
+        SUBSTRING([Datetime], 16, 5) AS Time, 
+        Stage, 
+        SUM(CAST([Home Team Goals] AS INT)) Sum_Of_Home_Goals,
+        SUM(CAST([Away Team Goals] AS INT)) Sum_Of_Away_Goals,
+        [Home Team Initials],
+        [Away Team Initials]
+    FROM WorldCupMatches
+    WHERE
+        [Year] = 1998 AND 
+        [Home Team Name] like 'France'
+    GROUP BY 
+        [Year], 
+        [Datetime], 
+        Stage, 
+        [Home Team Initials], 
+        [Away team Initials]
+
+
+------------------------WORLD CUPS THAT ARGENTINA PLAYED IN from 1930 to 2014-------------------------
+SELECT DISTINCT [Year]
+FROM WorldCupMatches
+WHERE 
+    [Home Team Name] like 'Argentina' OR
+    [Away Team Name] like 'Argentina'
+
+-----------------------------ARGENTINA GOLD MEDALS between 1930 to 2014--------------------------------
+SELECT *
+FROM WorldCups
+WHERE Winner = 'Argentina'
+---------------------------------------ARGENTINA SILVER MEDALS-----------------------------------------
+SELECT *
+FROM WorldCups
+WHERE [Runners-Up] = 'Argentina'
+-----ARGENTINA HAD ZERO THIRD PLACE AND FORTH POSITIONS IN WORLD CUP HISTORY BETWEEN 1930 AND 2014-----
+
+---------------------GOALS SCORED AND CONCEEDED BY ARGENTINA BETWEEN 1930 AND 2014-----------------------
+SELECT [Home Team Name],
+    SUM(CAST([Home Team Goals] AS int)) AS TOTAL_SCORED,
+    SUM(CAST([Away Team Goals] AS INT)) AS TOTAL_CONCEEDED
+FROM WorldCupMatches
+WHERE [Home Team Name] = 'Argentina'
+GROUP BY [Home Team Name]
+
+----------------------------ARGENTINA PERFORMANCE IN 1986 WORLD CUP--------------------------
+    SELECT  
+        SUBSTRING([Datetime], 2, 12) AS Date,
+        SUBSTRING([Datetime], 16, 5) AS Time, 
+        Stage, 
+        SUM(CAST([Home Team Goals] AS INT)) Sum_Of_Home_Goals,
+        SUM(CAST([Away Team Goals] AS INT)) Sum_Of_Away_Goals,
+        [Home Team Initials],
+        [Away Team Initials]
+    FROM WorldCupMatches
+    WHERE
+        [Year] = 1986 AND 
+        [Home Team Name] like 'Argentina'
+    GROUP BY 
+        [Year], 
+        [Datetime], 
+        Stage, 
+        [Home Team Initials], 
+        [Away team Initials]
+
+----------------------- No of Gold Medals by teams in the FIFA World Cup Between 1930 and 2014-----------------------
+/*
+    CREATE VIEW WC_Winners as 
+    SELECT [Year], Winner, count(Winner) as No_of_wins
+    FROM WorldCups 
+    GROUP BY [Year], Country, Winner
+*/
+
+SELECT  Winner, SUM(No_of_wins) as Gold_medals
+FROM WC_Winners
+group by Winner
+ORDER BY Gold_medals DESC
+
+-----------------------RANKING OF GOLD MEDALISTS IN FIFA WORLD CUP FROM 1930 TO 2014-------------------------
+SELECT 
+    Winner, 
+    SUM(No_of_wins) as Gold_medals,
+    RANK() OVER (
+            ORDER BY SUM(No_of_wins)) AS RANKING 
+FROM WC_Winners
+group by Winner
+ORDER BY Gold_medals DESC
+
+----------------------------NUMBER OF APPEARANCES OF EACH TEAM BETWEEN 1930 - 2014----------------------------
+SELECT [Home Team Name], count(DISTINCT [Year]) as no_of_appearances
+FROM WorldCupMatches
+WHERE 
+    [Home Team Name] IN('France','Argentina')
+GROUP BY [Home Team Name]
+
